@@ -1,0 +1,340 @@
+---
+title: "Distribuciones de probabilidad"
+author: "Maestría en Ciencia de Datos"
+date: "2023-11-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Distribuciones de probabilidad
+Una **distribución de probabilidad** es un concepto fundamental en estadística que describe cómo se distribuyen los valores de una variable aleatoria. Dependiendo de si la variable es discreta (toma valores específicos) o continua (puede tomar cualquier valor en un rango), las distribuciones se clasifican en distribuciones de probabilidad discretas o continuas. 
+
+### Distribución de Probabilidad
+
+1. **Para Variables Discretas**:
+   - Se describe generalmente mediante una **función de masa de probabilidad (PMF)**, que asigna una probabilidad a cada posible valor de la variable.
+   - Ejemplo: En la distribución binomial, la PMF te diría la probabilidad de obtener un cierto número de caras en un número de lanzamientos de una moneda.
+
+2. **Para Variables Continuas**:
+   - Se utiliza una **función de densidad de probabilidad (PDF)**, que describe la probabilidad relativa de que la variable aleatoria tome un valor en un intervalo específico.
+   - La probabilidad de que una variable continua tome un valor exacto es 0; en su lugar, se habla de la probabilidad de que caiga dentro de un rango.
+   - Ejemplo: La distribución normal se describe con una PDF que muestra una curva de campana.
+
+### Función de Distribución Acumulada
+
+La **función de distribución acumulada (CDF)** es otra herramienta clave. Proporciona la probabilidad de que la variable aleatoria tome un valor igual o menor que un valor específico.
+
+1. **Para Variables Discretas**:
+   - La CDF es una función escalonada que aumenta en cada valor donde la PMF tiene una probabilidad positiva.
+
+2. **Para Variables Continuas**:
+   - La CDF es una función continua que aumenta desde 0 a 1.
+   - Es la integral de la PDF.
+
+### Interpretación y Uso
+
+- **Interpretación**: Las distribuciones de probabilidad son esenciales para comprender la naturaleza de los datos y para realizar inferencias estadísticas. Por ejemplo, determinar si un conjunto de datos sigue una distribución normal puede influir en el tipo de pruebas estadísticas que se aplican.
+- **Uso en Modelado**: Las distribuciones se usan para modelar fenómenos en varios campos, como la física, la biología, la economía y las ciencias sociales.
+- **En Análisis Predictivo**: Las distribuciones ayudan a predecir la probabilidad de diferentes resultados y a tomar decisiones basadas en la probabilidad de varios escenarios.
+
+En resumen, las distribuciones de probabilidad proporcionan un marco para entender y predecir el comportamiento de las variables aleatorias, lo que es fundamental en estadística y análisis de datos.
+
+### PMF binomial
+```{r}
+# Parámetros para la distribución binomial
+n_binomial <- 10
+p_binomial <- 0.5
+
+# Crear valores para x y calcular PMF
+x_binomial <- 0:n_binomial
+pmf_binomial <- dbinom(x_binomial, size = n_binomial, prob = p_binomial)
+
+# Gráfico de la PMF
+plot(x_binomial, pmf_binomial, type = "h", lwd = 2, col = "blue",
+     main = "PMF de la Distribución Binomial",
+     xlab = "Número de Éxitos",
+     ylab = "Probabilidad")
+
+```
+
+### CDF binomial
+
+```{r}
+# Calcular CDF
+cdf_binomial <- pbinom(x_binomial, size = n_binomial, prob = p_binomial)
+
+# Gráfico de la CDF
+plot(x_binomial, cdf_binomial, type = "s", lwd = 2, col = "red",
+     main = "CDF de la Distribución Binomial",
+     xlab = "Número de Éxitos",
+     ylab = "Probabilidad Acumulada")
+
+```
+
+### PMF Normal
+```{r}
+# Parámetros para la distribución normal
+mu_normal <- 0
+sigma_normal <- 1
+
+# Crear valores para x y calcular PDF
+x_normal <- seq(-3, 3, length.out = 100)
+pdf_normal <- dnorm(x_normal, mean = mu_normal, sd = sigma_normal)
+
+# Gráfico de la PDF
+plot(x_normal, pdf_normal, type = "l", lwd = 2, col = "blue",
+     main = "PDF de la Distribución Normal",
+     xlab = "Valores",
+     ylab = "Densidad")
+
+```
+
+
+### CDF Normal
+```{r}
+# Calcular CDF
+cdf_normal <- pnorm(x_normal, mean = mu_normal, sd = sigma_normal)
+
+# Gráfico de la CDF
+plot(x_normal, cdf_normal, type = "l", lwd = 2, col = "red",
+     main = "CDF de la Distribución Normal",
+     xlab = "Valores",
+     ylab = "Probabilidad Acumulada")
+
+```
+
+
+
+## Distribuciones discretas más comunes
+
+### Distribución binomial
+Interpretación: Usada para modelar el número de éxitos en una cantidad fija de ensayos independientes, donde cada ensayo tiene solo dos resultados (éxito o fracaso) y la probabilidad de éxito es constante.
+
+$$
+P(X=k)=\left(\begin{array}{l}
+n \\
+k
+\end{array}\right) p^k(1-p)^{n-k}
+$$
+
+```{r}
+# Generar datos binomiales
+n_binomial <- 10
+p_binomial <- 0.5
+datos_binomial <- rbinom(1000, n_binomial, p_binomial)
+
+# Crear un histograma
+hist(datos_binomial, main = "Histograma de Distribución Binomial", xlab = "Número de Éxitos", ylab = "Frecuencia", col = "blue", breaks = n_binomial+1)
+
+```
+
+### Distribución de Poisson
+Interpretación: Adecuada para modelar el número de veces que ocurre un evento en un intervalo de tiempo o espacio, asumiendo que estos eventos ocurren con una tasa constante y de manera independiente.
+
+$$
+P(X=k)=\frac{e^{-\lambda} \lambda^k}{k !}
+$$
+
+```{r}
+# Generar datos de Poisson
+lambda_poisson <- 3
+datos_poisson <- rpois(1000, lambda_poisson)
+
+# Crear un histograma
+hist(datos_poisson, main = "Histograma de Distribución de Poisson", xlab = "Número de Eventos", ylab = "Frecuencia", col = "green", breaks = max(datos_poisson)+1)
+
+```
+
+### Distribución geométrica
+Interpretación: Describe el número de ensayos necesarios para obtener el primer éxito en una serie de ensayos de Bernoulli independientes.
+
+$$
+P(X=k)=(1-p)^{k-1} p
+$$
+
+```{r}
+# Generar datos geométricos
+p_geometric <- 0.2
+datos_geometric <- rgeom(1000, p_geometric)
+
+# Crear un histograma
+hist(datos_geometric, main = "Histograma de Distribución Geométrica", xlab = "Número de Ensayos hasta el Primer Éxito", ylab = "Frecuencia", col = "red", breaks = max(datos_geometric)+1)
+
+```
+
+### Distribución Uniforme Discreta
+En R, podemos simular una distribución uniforme discreta, por ejemplo, el lanzamiento de un dado:
+
+$$
+P(X=x)=\frac{1}{n}
+$$
+
+Donde $n$ es el número de resultados posibles y $x$ es un resultado específico. Todos los resultados son igualmente probables.
+
+
+
+```{r}
+# Lanzamiento de un dado (6 caras)
+dados <- sample(1:6, 1000, replace = TRUE)
+
+# Histograma
+hist(dados, main = "Histograma de Distribución Uniforme Discreta", xlab = "Resultado del Dado", ylab = "Frecuencia", col = "orange", breaks = 6)
+
+```
+
+### Distribución Hipergeométrica
+Vamos a simular una situación donde sacamos 10 bolas de una urna que contiene 20 bolas rojas y 30 azules, y contamos cuántas rojas obtenemos:
+
+$$
+P(X=k)=\frac{\left(\begin{array}{l}
+K \\
+k
+\end{array}\right)\left(\begin{array}{c}
+N-K \\
+n-k
+\end{array}\right)}{\left(\begin{array}{l}
+N \\
+n
+\end{array}\right)}
+$$
+
+Donde $N$ es el tamaño de la población, $K$ es el número de éxitos en la población, $n$ es el tamaño de la muestra, y $k$ es el número de éxitos observados en la muestra.
+
+```{r}
+# Parámetros: 20 bolas rojas, 30 azules, sacamos 10
+hipergeometrica <- rhyper(1000, 20, 30, 10)
+
+# Histograma
+hist(hipergeometrica, main = "Histograma de Distribución Hipergeométrica", xlab = "Número de Bolas Rojas Obtenidas", ylab = "Frecuencia", col = "purple")
+
+```
+
+### Distribución Binomial Negativa
+Supongamos que queremos saber cuántas veces tenemos que lanzar una moneda hasta obtener 5 caras, considerando una probabilidad de cara de 0.5:
+
+$$
+P(X=k)=\left(\begin{array}{c}
+k-1 \\
+r-1
+\end{array}\right) p^r(1-p)^{k-r}
+$$
+
+Donde $k$ es el número total de ensayos, $r$ es el número de éxitos requeridos, y $p$ es la probabilidad de éxito en cada ensayo.
+
+
+```{r}
+# Parámetros: 5 éxitos, probabilidad de cara 0.5
+binomial_negativa <- rnbinom(1000, size = 5, prob = 0.5)
+
+# Histograma
+hist(binomial_negativa, main = "Histograma de Distribución Binomial Negativa", xlab = "Número de Lanzamientos Hasta 5 Caras", ylab = "Frecuencia", col = "green")
+
+```
+
+### Distribución de Bernoulli
+Simularemos el resultado de 1000 lanzamientos de una moneda:
+
+La fórmula para la distribución de Bernoulli es la siguiente:
+
+$$
+P(X = k) = 
+\begin{cases} 
+p & \text{si } k=1 \\
+1-p & \text{si } k=0 
+\end{cases}
+$$
+
+Donde $p$ es la probabilidad de éxito y $1-p$ es la probabilidad de fracaso.
+
+
+
+
+```{r}
+# Lanzamiento de moneda (0 = cruz, 1 = cara)
+bernoulli <- rbinom(1000, size = 1, prob = 0.5)
+
+# Histograma
+hist(bernoulli, main = "Histograma de Distribución de Bernoulli", xlab = "Resultado", ylab = "Frecuencia", col = "blue", breaks = 2)
+
+```
+
+
+## Distribuciones continuas más comunes
+
+### Distribución normal
+Interpretación: Describe una variable continua donde las observaciones tienden a agruparse alrededor de un valor medio. Se utiliza en una variedad de campos debido a su relación con el Teorema Central del Límite.
+
+$$
+f(x)=\frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(x-\mu)^2}{2 \sigma^2}}
+$$
+
+Donde $\mu$ es la media y $\sigma$ es la desviación estándar.
+
+```{r}
+# Generar datos de una distribución normal
+datos_normales <- rnorm(1000, mean = 0, sd = 1)
+
+# Histograma
+hist(datos_normales, main = "Histograma de la Distribución Normal", xlab = "Valores", ylab = "Frecuencia", col = "lightblue", border = "darkblue")
+
+
+```
+
+### Distribución Exponencial
+Interpretación: Usada para modelar el tiempo entre eventos en un proceso de Poisson, como el tiempo hasta el próximo fallo de una máquina.
+
+$$
+f(x)=\lambda e^{-\lambda x}
+$$
+
+Donde $\lambda$ es la tasa de ocurrencia.
+
+```{r}
+# Generar datos de una distribución exponencial
+datos_exponenciales <- rexp(1000, rate = 1)
+
+# Histograma con mejor formato
+hist(datos_exponenciales, main = "Histograma de la Distribución Exponencial", xlab = "Valores", ylab = "Frecuencia", col = "lightgreen", border = "darkgreen")
+
+
+```
+
+### Distribución de Weibull
+Interpretación: Una distribución versátil usada en análisis de fiabilidad y estudios de vida útil. Permite modelar diversas formas de tasas de fallo.
+
+$$
+f(x)=\frac{\beta}{\alpha}\left(\frac{x}{\alpha}\right)^{\beta-1} e^{-(x / \alpha)^\beta}
+$$
+
+Donde $\alpha$ es el parámetro de escala y $\beta$ es el parámetro de forma.
+
+```{r}
+# Generar datos de una distribución de Weibull
+datos_weibull <- rweibull(1000, shape = 1.5, scale = 1)
+
+# Histograma 
+hist(datos_weibull, main = "Histograma de la Distribución de Weibull", xlab = "Valores", ylab = "Frecuencia", col = "lightpink", border = "darkred")
+
+```
+
+#### Distribución Log-Normal
+Interpretación: Usada para modelar variables que representan el logaritmo de una variable normalmente distribuida. Común en análisis financiero y estudios ambientales.
+
+$$
+f(x)=\frac{1}{x \sigma \sqrt{2 \pi}} e^{-\frac{(\ln x-\mu)^2}{2 \sigma^2}}
+$$
+
+Donde $\mu$ y $\sigma$ son los parámetros de la distribución log-normal.
+
+```{r}
+# Generar datos de una distribución log-normal
+datos_lognormales <- rlnorm(1000, meanlog = 0, sdlog = 1)
+
+# Histograma
+hist(datos_lognormales, main = "Histograma de la Distribución Log-Normal", xlab = "Valores", ylab = "Frecuencia", col = "lightyellow", border = "darkorange")
+
+```
+
